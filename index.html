@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Week 12</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        /* Additional style rules go here! */
+    </style>
+
+
+</head>
+<body>
+    <header>
+        <h1>Find My Hidden Location!</h1>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by Cayley, Wing Yee Lee</p>
+    </footer>
+
+
+    <script>
+        var options = {
+            center: [0, 0],
+            zoom: 2,
+        }
+        
+        var map = L.map('map', options);
+        
+        var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            maxZoom: 30,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        map.addLayer(tiles);
+
+
+        // My hidden location marker
+        var hiddenMarker = L.latLng(22.36450,114.37555); 
+        L.marker(hiddenMarker, {
+            icon : L.icon({
+                iconUrl: 'mylocation.jpg', 
+                iconSize: [40, 36] 
+            }),
+            opacity: 0   //Invisible
+        }).addTo(map);
+        
+
+
+        var markers = L.layerGroup().addTo(map); // Creates an empty Layer Group
+        map.on('click', function(e) { 
+        markers.clearLayers(); 
+   
+        var clickCoord = e.latlng; 
+        console.log(e.latlng)
+        var marker = L.marker(clickCoord, {
+
+        });
+        marker.addTo(markers);
+
+       
+        var miles = calcDistance(hiddenMarker, clickCoord); 
+        console.log(miles);
+
+        marker.bindPopup("<b>" + getCategory(miles) + "</b><br>Here from my hidden location is " + miles.toLocaleString() + " miles.").openPopup();
+
+        function getCategory(distance) {
+            if (distance < 500) {
+                return "It's close! Within 500 miles!";
+            } else if (distance >= 500 && distance < 3000) {
+                return "Not far at all! Greater than 500 but less than 3000 miles!";
+            } else if (distance >= 3000 && distance < 7000) {
+                return "Quite the adventure! Greater than 3000 miles!";
+            } else if (distance >= 7000 && distance < 10000) {
+                return "Far away! Greater than 7000 miles!";
+            } else {
+                return "Far, far away! Greater than 10000 miles!";
+            }
+        }
+});
+
+
+        function calcDistance(myLocation, click) {  
+            var distance = myLocation.distanceTo(click);
+            return distance/1609.45; // Convert meters to miles
+        
+        }
+
+
+        function revealHiddenLocation() {
+        // Set icon and bind popup
+        hiddenMarker.setIcon(L.icon({
+            iconUrl: 'mylocation.jpg',
+            iconSize: [40, 36]
+        })).bindPopup("Hong Kong UNESCO Global Geopark").openPopup();
+        hiddenMarker.addTo(map);
+
+        // Make the hidden marker visible
+        hiddenMarker.setOpacity(1);
+
+        // Click to turn invisible
+        markers.clearLayers();
+    }
+        
+    </script>
+</body>
+</html>
