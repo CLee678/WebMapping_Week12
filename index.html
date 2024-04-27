@@ -78,14 +78,19 @@
 
         // My hidden location marker
         var hiddenMarker = L.latLng(22.36450,114.37555); 
-        L.marker(hiddenMarker, {
-            icon : L.icon({
-                iconUrl: 'mylocation.jpg', 
-                iconSize: [40, 36] 
-            }),
-            opacity: 0   //Invisible
-        }).addTo(map);
         
+            var revealMarker = L.marker(hiddenMarker, {
+                icon : L.icon({
+                    iconUrl: 'mylocation.jpg', 
+                    iconSize: [40, 36] 
+                }),
+           }).addTo(map);
+
+           revealMarker.setOpacity(0);
+        
+        revealMarker.on('click',function(){
+            revealMarker.setOpacity(1)
+        })
 
 
         var markers = L.layerGroup().addTo(map); // Creates an empty Layer Group
@@ -103,45 +108,33 @@
         var miles = calcDistance(hiddenMarker, clickCoord); 
         console.log(miles);
 
-        marker.bindPopup("<b>" + getCategory(miles) + "</b><br>Here from my hidden location is " + miles.toLocaleString() + " miles.").openPopup();
+        var miles_mi = miles/1609.34;
 
-        function getCategory(distance) {
-            if (distance < 500) {
-                return "It's close! Within 500 miles!";
-            } else if (distance >= 500 && distance < 3000) {
-                return "Not far at all! Greater than 500 but less than 3000 miles!";
-            } else if (distance >= 3000 && distance < 7000) {
-                return "Quite the adventure! Greater than 3000 miles!";
-            } else if (distance >= 7000 && distance < 10000) {
-                return "Far away! Greater than 7000 miles!";
-            } else {
-                return "Far, far away! Greater than 10000 miles!";
+        var miles_cat = getCategory(miles_mi);
+
+            marker.bindPopup("<b>" + getCategory(miles_mi) + "</b><br>Here from my hidden location is " + (miles_mi).toLocaleString() + " miles.").openPopup();
+
+            function getCategory(miles_mi) {
+                if (miles_mi < 500) {
+                    return "It's close! Within 500 miles!";
+                } else if (miles_mi >= 500 && miles_mi < 3000) {
+                    return "Not far at all! Greater than 500 but less than 3000 miles!";
+                } else if (miles_mi >= 3000 && miles_mi < 7000) {
+                    return "Quite the adventure! Greater than 3000 miles!";
+                } else if (miles_mi >= 7000 && miles_mi < 10000) {
+                    return "Far away! Greater than 7000 miles!";
+                } else {
+                    return "Far, far away! Greater than 10000 miles!";
+                }
             }
-        }
-});
+    });
 
 
         function calcDistance(myLocation, click) {  
             var distance = myLocation.distanceTo(click);
-            return distance/1609.45; // Convert meters to miles
-        
+            return distance // Convert meters to miles
         }
 
-
-        function revealHiddenLocation() {
-        // Set icon and bind popup
-        hiddenMarker.setIcon(L.icon({
-            iconUrl: 'mylocation.jpg',
-            iconSize: [40, 36]
-        })).bindPopup("Hong Kong UNESCO Global Geopark").openPopup();
-        hiddenMarker.addTo(map);
-
-        // Make the hidden marker visible
-        hiddenMarker.setOpacity(1);
-
-        // Click to turn invisible
-        markers.clearLayers();
-    }
         
     </script>
 </body>
