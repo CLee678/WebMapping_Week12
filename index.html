@@ -78,7 +78,6 @@
 
         // My hidden location marker
         var hiddenMarker = L.latLng(22.36450,114.37555); 
-        
             var revealMarker = L.marker(hiddenMarker, {
                 icon : L.icon({
                     iconUrl: 'mylocation.jpg', 
@@ -89,8 +88,8 @@
            revealMarker.setOpacity(0);
         
         revealMarker.on('click',function(){
-            revealMarker.setOpacity(1)
-        })
+            revealMarker.setOpacity(1).bindPopup("Hong Kong UNESCO Global Geopark").openPopup();
+        });
 
 
         var markers = L.layerGroup().addTo(map); // Creates an empty Layer Group
